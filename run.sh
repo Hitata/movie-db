@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Actress Database - Run Script
+# Movie DB - Run Script
 # Starts both backend and frontend with one command
 
 set -e
@@ -14,7 +14,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}🎬 Starting Actress Database...${NC}"
+echo -e "${GREEN}🎬 Starting Movie DB...${NC}"
 echo ""
 
 # Check Python
@@ -38,7 +38,7 @@ fi
 
 echo -e "${YELLOW}Activating virtual environment and installing dependencies...${NC}"
 source venv/bin/activate
-pip install -r requirements.txt -q
+./venv/bin/pip install -r requirements.txt -q
 cd ..
 
 # Install frontend dependencies
@@ -61,8 +61,7 @@ trap cleanup SIGINT SIGTERM
 # Start backend
 echo -e "${GREEN}Starting backend server on http://localhost:8000${NC}"
 cd backend
-source venv/bin/activate
-python -m uvicorn main:app --reload --port 8000 &
+./venv/bin/python -m uvicorn main:app --reload --port 8000 &
 BACKEND_PID=$!
 cd ..
 

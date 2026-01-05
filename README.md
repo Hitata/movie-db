@@ -1,6 +1,6 @@
-# Actor Database
+# Movie DB
 
-A mobile-first web app for managing actors and their categories.
+A mobile-first web app for managing actors and movies with categories.
 
 ## Quick Start
 
@@ -15,6 +15,15 @@ This will:
 4. Start the React frontend (port 5173)
 
 Open **http://localhost:5173** in your browser.
+
+## Features
+
+- **Home Page**: Choose between Actors and Movies
+- **Actors Page**: Add/delete actors with categories
+- **Movies Page**: Add/delete movies with code, name, actors, and categories
+- Many-to-many relationships: Movies can have multiple actors, actors can be in multiple movies
+- Mobile-first responsive design
+- SQLite database (no setup required)
 
 ## Manual Setup
 
@@ -34,14 +43,7 @@ npm install
 npm run dev
 ```
 
-## Features
-
-- Add actors with multiple categories
-- Create new categories on the fly
-- Mobile-first responsive design
-- SQLite database (no setup required)
-
 ## Tech Stack
 
 - **Backend**: FastAPI + SQLAlchemy + SQLite
-- **Frontend**: React + Vite
+- **Frontend**: React + Vite + React Router
