@@ -1,9 +1,12 @@
+import os
+import yaml
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Table, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 
 DATABASE_URL = "sqlite:///./moviedb.db"
+FEATURES_YAML = os.path.join(os.path.dirname(__file__), "features.yaml")
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -91,35 +94,76 @@ def get_db():
         db.close()
 
 
+def load_features_from_yaml():
+    """Load feature configuration from YAML file"""
+    if not os.path.exists(FEATURES_YAML):
+        print(f"Warning: {FEATURES_YAML} not found, using defaults")
+        return None
+    
+    with open(FEATURES_YAML, 'r') as f:
+        config = yaml.safe_load(f)
+    
+    return config.get('features', [])
+
+
 def init_db():
     Base.metadata.create_all(bind=engine)
     
-    # Initialize default features if not exist
+    # Initialize features from YAML if database is empty
     db = SessionLocal()
     try:
         if db.query(Feature).count() == 0:
-            default_features = [
-                {"name": "Fire", "color": "#ef4444", "order": 1},      # Red
-                {"name": "Earth", "color": "#eab308", "order": 2},     # Yellow
-                {"name": "Metal", "color": "#f5f5f5", "order": 3},     # White
-                {"name": "Water", "color": "#1e40af", "order": 4},     # Dark Blue
-                {"name": "Life", "color": "#22c55e", "order": 5},      # Green
-            ]
+            features_config = load_features_from_yaml()
             
-            for feat_data in default_features:
-                feature = Feature(**feat_data)
-                db.add(feature)
-                db.flush()
-                
-                # Add three types for each feature
-                for shade in ["light", "middle", "dark"]:
-                    feature_type = FeatureType(
-                        feature_id=feature.id,
-                        name=f"{feat_data['name']} {shade.capitalize()}",
-                        shade=shade
+            if features_config:
+                # Load from YAML
+                for idx, feat_data in enumerate(features_config):
+                    feature = Feature(
+                        name=feat_data['name'],
+                        color=feat_data['color'],
+                        order=idx + 1
                     )
-                    db.add(feature_type)
+                    db.add(feature)
+                    db.flush()
+                    
+                    # Add three types for each feature
+                    types = feat_data.get('types', {})
+                    for shade in ["light", "middle", "dark"]:
+                        type_name = types.get(shade)
+                        # Skip empty/null type names, or use default if not provided
+                        if not type_name:
+                            type_name = f"{shade.capitalize()}"
+                        feature_type = FeatureType(
+                            feature_id=feature.id,
+                            name=type_name,
+                            shade=shade
+                        )
+                        db.add(feature_type)
+            else:
+                # Fallback to defaults
+                default_features = [
+                    {"name": "Fire", "color": "#ef4444"},
+                    {"name": "Earth", "color": "#eab308"},
+                    {"name": "Metal", "color": "#f5f5f5"},
+                    {"name": "Water", "color": "#1e40af"},
+                    {"name": "Life", "color": "#22c55e"},
+                ]
+                
+                for idx, feat_data in enumerate(default_features):
+                    feature = Feature(name=feat_data['name'], color=feat_data['color'], order=idx + 1)
+                    db.add(feature)
+                    db.flush()
+                    
+                    for shade in ["light", "middle", "dark"]:
+                        feature_type = FeatureType(
+                            feature_id=feature.id,
+                            name=f"{feat_data['name']} {shade.capitalize()}",
+                            shade=shade
+                        )
+                        db.add(feature_type)
             
             db.commit()
+            print("Features initialized from configuration")
     finally:
         db.close()
+

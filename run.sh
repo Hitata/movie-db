@@ -36,6 +36,14 @@ if [ ! -d "venv" ]; then
     python3 -m venv venv
 fi
 
+# Copy features.yaml from example if it doesn't exist
+if [ ! -f "features.yaml" ]; then
+    if [ -f "features.yaml.example" ]; then
+        echo -e "${YELLOW}Creating features.yaml from example...${NC}"
+        cp features.yaml.example features.yaml
+    fi
+fi
+
 echo -e "${YELLOW}Activating virtual environment and installing dependencies...${NC}"
 source venv/bin/activate
 ./venv/bin/pip install -r requirements.txt -q

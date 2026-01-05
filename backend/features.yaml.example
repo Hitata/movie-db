@@ -1,0 +1,40 @@
+# Feature Configuration
+# Copy this file to features.yaml and customize as needed
+# Each feature has a name, color (hex), and three types (light, middle, dark)
+
+features:
+  - name: Fire
+    color: "#ef4444"
+    types:
+      light: Fire Light
+      middle: Fire Middle
+      dark: Fire Dark
+
+  - name: Earth
+    color: "#eab308"
+    types:
+      light: Earth Light
+      middle: Earth Middle
+      dark: Earth Dark
+
+  - name: Metal
+    color: "#f5f5f5"
+    types:
+      light: Metal Light
+      middle: Metal Middle
+      dark: Metal Dark
+
+  - name: Water
+    color: "#1e40af"
+    types:
+      light: Water Light
+      middle: Water Middle
+      dark: Water Dark
+
+  - name: Life
+    color: "#22c55e"
+    types:
+      light: Life Light
+      middle: Life Middle
+      dark: Life Dark
+
